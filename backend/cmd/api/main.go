@@ -1,31 +1,25 @@
 package main
 
 import (
-	"finview/backend/initializers"
-	"net/http"
+  "finview/backend/initializers"
+
+	"finview/backend/routes"
+  
 
 	"github.com/gin-gonic/gin"
 )
 
 func init() {
 	initializers.LoaderEnvVariables()
-	initializers.ConnectToDb()
-	initializers.SyncDatabase()
+	initializers.InitDB()
 }
 
 func main() {
-  // Create a Gin router with default middleware (logger and recovery)
-  r := gin.Default()
+	r := gin.Default()
 
-  // Define a simple GET endpoint
-  r.GET("/ping", func(c *gin.Context) {
-    // Return JSON response
-    c.JSON(http.StatusOK, gin.H{
-      "message": "pong",
-    })
-  })
+	// Setup routes
+	routes.SetupRoutes(r)
 
-  // Start server on port 8080 (default)
-  // Server will listen on 0.0.0.0:8080 (localhost:8080 on Windows)
-  r.Run()
+	// Start server
+	r.Run() // listens and serves on 0.0.0.0:8080 (for windows "localhost:8080")
 }

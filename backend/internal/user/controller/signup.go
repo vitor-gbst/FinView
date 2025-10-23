@@ -4,13 +4,12 @@ import (
 	"finview/backend/initializers"
 	"finview/backend/internal/user/model"
 	"net/http"
-	"os/user"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Singup(c *gin.Context){
+func Signup(c *gin.Context){
 	var body struct{
 		Email string
 		Password string
@@ -31,7 +30,7 @@ func Singup(c *gin.Context){
 		return
 	}
 
-	user := models.User(Email: body.Email, Password: string(hash))
+	user := model.User{Email: body.Email, Password: string(hash)}
 	result := initializers.DB.Create(&user)
 
 	if result.Error !=nil {
