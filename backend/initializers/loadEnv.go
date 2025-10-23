@@ -1,10 +1,14 @@
 package initializers
 
-import "log"
+import (
+	"log"
+
+	"github.com/joho/godotenv"
+)
 
 func LoaderEnvVariables() {
 
-	err := gotoenv.Load()
+	err := godotenv.Load()
 
 	if err != nil {
 		log.Fatal("Error loading .evn file")

@@ -1,5 +1,7 @@
 package initializers
 
-func SyncDatabase(){
+import "finview/backend/internal/user/model"
+
+func SyncDatabase() {
 	DB.AutoMigrate(&model.User{})
 }

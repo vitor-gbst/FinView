@@ -1,7 +1,13 @@
 package main
 
+import (
+	"finview/backend/initializers"
+	"net/http"
 
-func init(){
+	"github.com/gin-gonic/gin"
+)
+
+func init() {
 	initializers.LoaderEnvVariables()
 	initializers.ConnectToDb()
 	initializers.SyncDatabase()
