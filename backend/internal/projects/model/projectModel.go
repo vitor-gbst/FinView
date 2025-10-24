@@ -5,14 +5,14 @@ import (
 )
 
 type Project struct {
-	gorm.Model // Adiciona ID, CreatedAt, UpdatedAt, DeletedAt
+	gorm.Model 
 
 	Name             string `gorm:"not null"`
-	ArqPath          string `gorm:"not null;unique"` // Caminho do arquivo no servidor
+	ArqPath          string `gorm:"not null;unique"` 
 	OriginalFilename string
-	ConfigColumn     string // Coluna de análise (ex: "C")
-	ConfigLine       int    // Linha onde os dados começam (ex: 2)
+	ConfigSheet 	 string
+	ConfigColumn     string 
+	ConfigLine       int    
 
-	// A Relação: "Project pertence a um User"
 	UserID uint `gorm:"not null"`
 }

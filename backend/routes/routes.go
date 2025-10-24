@@ -20,11 +20,9 @@ func SetupRoutes(r *gin.Engine) {
 	
 	projectRoutes := r.Group("/projects", middleware.RequireAuth)
 	{
-		// POST /projects/
 		projectRoutes.POST("/", projectController.UploadProject)
-
-		// GET /projects/
 		projectRoutes.GET("/", projectController.GetUserProjects)
+		projectRoutes.GET("/:id/analysis", projectController.GetProjectAnalysis)
 
 	}
 }
