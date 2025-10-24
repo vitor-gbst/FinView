@@ -1,7 +1,8 @@
 package initializers
 
 import (
-	"finview/backend/internal/user/model"
+	projectModel "finview/backend/internal/projects/model"
+	userModel "finview/backend/internal/user/model"
 	"log"
 	"os"
 	"path/filepath"
@@ -30,5 +31,5 @@ func InitDB() {
 	}
 
 	// Migrate the schema
-	DB.AutoMigrate(&model.User{})
+	DB.AutoMigrate(&userModel.User{}, &projectModel.Project{})
 }
