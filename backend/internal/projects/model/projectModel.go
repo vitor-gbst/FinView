@@ -11,8 +11,9 @@ type Project struct {
 	ArqPath          string `gorm:"not null;unique"` 
 	OriginalFilename string
 	ConfigSheet 	 string
-	ConfigColumn     string 
-	ConfigLine       int    
+	ConfigColumn     string
+	ConfigDateColumn string
+	ConfigLine       int
 
 	UserID uint `gorm:"not null"`
 }

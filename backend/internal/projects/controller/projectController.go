@@ -55,9 +55,10 @@ func GetUserProjects(c *gin.Context) {
 }
 
 type settingsInput struct {
-	Sheet  string `json:"sheet" binding:"required"`
-	Column string `json:"column" binding:"required"`
-	Line   int    `json:"line" binding:"required"`
+	Sheet      string `json:"sheet" binding:"required"`
+	Column     string `json:"column" binding:"required"`
+	DateColumn string `json:"date_column"`
+	Line       int    `json:"line" binding:"required"`
 }
 
 func UpdateProjectSettings(c *gin.Context) {
@@ -77,7 +78,7 @@ func UpdateProjectSettings(c *gin.Context) {
 		return
 	}
 
-	project, err := service.UpdateProjectSettings(user.ID, uint(projectID), input.Sheet, input.Column, input.Line)
+	project, err := service.UpdateProjectSettings(user.ID, uint(projectID), input.Sheet, input.Column, input.DateColumn, input.Line)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()}) 
 		return

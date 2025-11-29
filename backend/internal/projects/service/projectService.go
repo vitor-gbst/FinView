@@ -2,6 +2,7 @@ package service
 
 import (
 	"finview/backend/initializers"
+	"finview/backend/internal/analysis"
 	"finview/backend/internal/projects/model"
 	"fmt"
 	"io"
@@ -49,8 +50,8 @@ func CreateProject(file *multipart.FileHeader, userID uint, projectName string) 
 		UserID:           userID,
 		ArqPath:          storagePath,
 		OriginalFilename: file.Filename,
-		ConfigLine:       1, 
-		ConfigColumn:     "A", 
+		ConfigLine:       1,
+		ConfigColumn:     "A",
 	}
 
 	result := initializers.DB.Create(&project)
@@ -73,7 +74,7 @@ func GetProjectsForUser(userID uint) ([]model.Project, error) {
 }
 
 // --- Update project settings --
-func UpdateProjectSettings(userID, projectID uint, sheet string, column string, line int) (*model.Project, error) {
+func UpdateProjectSettings(userID, projectID uint, sheet, column, dateColumn string, line int) (*model.Project, error) {
 	var project model.Project
 
 	result := initializers.DB.First(&project, "id = ? AND user_id = ?", projectID, userID)
@@ -86,6 +87,7 @@ func UpdateProjectSettings(userID, projectID uint, sheet string, column string, 
 
 	project.ConfigSheet = sheet
 	project.ConfigColumn = column
+	project.ConfigDateColumn = dateColumn
 	project.ConfigLine = line
 
 	saveResult := initializers.DB.Save(&project)
@@ -96,19 +98,8 @@ func UpdateProjectSettings(userID, projectID uint, sheet string, column string, 
 	return &project, nil
 }
 
-
-// --- Analysis --
-type AnalysisResult struct {
-	Type   string    `json:"type"`
-	Column string    `json:"column"`
-	Count  int       `json:"count"`
-	Sum    float64   `json:"sum"`
-	Mean   float64   `json:"mean"`
-	Data   []float64 `json:"data"` 
-}
-
 // --- GetProjectAnalysis exec analisys ---
-func GetProjectAnalysis(userID, projectID uint, analysisType string) (*AnalysisResult, error) {
+func GetProjectAnalysis(userID, projectID uint, analysisType string) (*analysis.AnalysisResult, error) {
 	var project model.Project
 
 	result := initializers.DB.First(&project, "id = ? AND user_id = ?", projectID, userID)
@@ -126,56 +117,84 @@ func GetProjectAnalysis(userID, projectID uint, analysisType string) (*AnalysisR
 	}
 	defer f.Close()
 
-	
 	rows, err := f.GetRows(project.ConfigSheet)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to read '%s'", project.ConfigSheet)
 	}
 
-	colIndex := -1
+	valueColIndex := -1
+	dateColIndex := -1
 	if project.ConfigLine > 0 && project.ConfigLine-1 < len(rows) {
-		headerRow := rows[project.ConfigLine-1] 
+		headerRow := rows[project.ConfigLine-1]
 		for i, colName := range headerRow {
 			if colName == project.ConfigColumn {
-				colIndex = i
-				break
+				valueColIndex = i
+			}
+			if project.ConfigDateColumn != "" && colName == project.ConfigDateColumn {
+				dateColIndex = i
 			}
 		}
 	}
 
-	if colIndex == -1 {
-		return nil, fmt.Errorf("collumn '%s' not found on line %d", project.ConfigColumn, project.ConfigLine)
+	if valueColIndex == -1 {
+		return nil, fmt.Errorf("value collumn '%s' not found on line %d", project.ConfigColumn, project.ConfigLine)
 	}
 
+	// Time series analysis if date column is configured
+	if dateColIndex != -1 {
+		var series []analysis.TimeSeriesDataPoint
+		for i := project.ConfigLine; i < len(rows); i++ {
+			row := rows[i]
+			if valueColIndex < len(row) && dateColIndex < len(row) {
+				valStr := row[valueColIndex]
+				dateStr := row[dateColIndex]
+
+				val, err := strconv.ParseFloat(valStr, 64)
+				if err != nil {
+					continue // Skip rows where value is not a valid float
+				}
+
+				// Attempt to parse date in multiple common formats
+				date, err := parseDate(dateStr)
+				if err != nil {
+					continue // Skip rows where date is not in a recognized format
+				}
+
+				series = append(series, analysis.TimeSeriesDataPoint{Date: date, Value: val})
+			}
+		}
+		return analysis.CalculateTimeSeriesAnalysis(series, analysisType, project.ConfigColumn), nil
+	}
+
+	// Fallback to basic analysis if no date column is set
 	var data []float64
-	var sum float64
 	for i := project.ConfigLine; i < len(rows); i++ {
 		row := rows[i]
-		if colIndex < len(row) {
-			valStr := row[colIndex]
+		if valueColIndex < len(row) {
+			valStr := row[valueColIndex]
 			if val, err := strconv.ParseFloat(valStr, 64); err == nil {
-				
 				data = append(data, val)
-				sum += val
 			}
 		}
 	}
-	
-	count := len(data)
-	var mean float64
-	if count > 0 {
-		mean = sum / float64(count)
-	}
 
-	analysis := &AnalysisResult{
-		Type:   analysisType,
-		Column: project.ConfigColumn,
-		Count:  count,
-		Sum:    sum,
-		Mean:   mean,
-		Data:   data, 
-	}
-
-	return analysis, nil
+	analysisResult := analysis.CalculateBasicAnalysis(data, analysisType, project.ConfigColumn)
+	return analysisResult, nil
 }
 
+func parseDate(dateStr string) (time.Time, error) {
+	layouts := []string{
+		"2006-01-02",
+		"02/01/2006",
+		"01-02-2006",
+		"02-Jan-2006",
+		time.RFC3339,
+	}
+	for _, layout := range layouts {
+		t, err := time.Parse(layout, dateStr)
+		if err == nil {
+			return t, nil
+		}
+	}
+	return time.Time{}, fmt.Errorf("unable to parse date: %s", dateStr)
+}
