@@ -1,0 +1,108 @@
+/* Fundo escuro atrás do modal (Overlay) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(43, 54, 116, 0.4); /* Azul escuro translúcido */
+  backdrop-filter: blur(4px); /* Efeito de vidro borrado */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn 0.3s forwards;
+}
+
+/* O Modal em si */
+.modal-content {
+  background-color: var(--card-bg);
+  width: 100%;
+  max-width: 500px;
+  padding: 30px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  transform: scale(0.9);
+  animation: scaleUp 0.3s forwards;
+}
+
+.modal-header h2 {
+  color: var(--text-primary);
+  margin-bottom: 5px;
+  font-size: 24px;
+}
+
+.modal-header p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+/* Área de Upload (Dropzone) */
+.upload-area {
+  border: 2px dashed #E0E5F2;
+  border-radius: 16px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #FAFCFE;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.upload-area:hover, .upload-area.drag-active {
+  border-color: var(--primary-color);
+  background-color: rgba(5, 205, 153, 0.05);
+}
+
+.upload-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F4F7FE;
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+/* Botões de Ação */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 12px 20px;
+  border-radius: 10px;
+}
+
+.btn-ghost:hover {
+  background-color: #F4F7FE;
+  color: var(--text-primary);
+}
+
+/* Animações */
+@keyframes fadeIn { to { opacity: 1; } }
+@keyframes scaleUp { to { transform: scale(1); } }

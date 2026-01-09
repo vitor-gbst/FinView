@@ -1,0 +1,39 @@
+:root {
+  /* Paleta de Cores Baseada na Referência */
+  --bg-color: #F4F7FE;       /* Fundo geral cinza muito claro/azulado */
+  --sidebar-bg: #FFFFFF;     /* Fundo branco puro */
+  --card-bg: #FFFFFF;
+  
+  /* Cores de Texto */
+  --text-primary: #2B3674;   /* Azul marinho bem escuro (mais sério que preto) */
+  --text-secondary: #A3AED0; /* Cinza para textos menos importantes */
+  
+  /* Cor de Destaque (Branding) */
+  --primary-color: #05CD99;  /* Aquele verde menta da referência */
+  --primary-hover: #04b386;
+
+  /* Sombras Suaves (Essencial para o visual "Clean") */
+  --shadow-sm: 0px 2px 5px rgba(112, 144, 176, 0.08);
+  --shadow-md: 0px 4px 12px rgba(112, 144, 176, 0.15);
+  
+  /* Arredondamento */
+  --radius: 20px;            /* Bordas arredondadas modernas */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'DM Sans', 'Segoe UI', Roboto, Helvetica, sans-serif; /* Fonte moderna */
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Utilitários */
+.flex { display: flex; }
+.col { flex-direction: column; }
+.center { align-items: center; justify-content: center; }

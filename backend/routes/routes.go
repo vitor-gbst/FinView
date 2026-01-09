@@ -23,6 +23,7 @@ func SetupRoutes(r *gin.Engine) {
 		projectRoutes.POST("/", projectController.UploadProject)
 		projectRoutes.GET("/", projectController.GetUserProjects)
 		projectRoutes.GET("/:id/analysis", projectController.GetProjectAnalysis)
+		projectRoutes.PUT("/:id/settings", projectController.UpdateProjectSettings)
 
 	}
 }

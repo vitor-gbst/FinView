@@ -1,0 +1,11 @@
+ID,Data,Descrição,Categoria,Tipo,Valor,Status,Forma Pagamento
+1,2023-11-01,Salário Mensal,Receita,Entrada,5000.00,Pago,Pix
+2,2023-11-02,Aluguel Apartamento,Moradia,Saída,1800.00,Pago,Boleto
+3,2023-11-03,Supermercado Extra,Alimentação,Saída,450.50,Pago,Cartão Crédito
+4,2023-11-05,Posto de Gasolina,Transporte,Saída,200.00,Pago,Cartão Débito
+5,2023-11-10,Freelance Design,Receita,Entrada,1200.00,Pendente,Pix
+6,2023-11-12,Netflix,Assinaturas,Saída,39.90,Pago,Cartão Crédito
+7,2023-11-15,Jantar Restaurante,Lazer,Saída,180.00,Pendente,Cartão Crédito
+8,2023-11-20,Conta de Luz,Moradia,Saída,120.00,Pendente,Boleto
+9,2023-11-21,Academia SmartFit,Saúde,Saída,99.90,Pago,Cartão Crédito
+10,2023-11-25,Venda Item Usado,Outros,Entrada,150.00,Pago,Dinheiro
