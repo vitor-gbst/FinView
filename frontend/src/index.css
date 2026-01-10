@@ -1,23 +1,21 @@
 :root {
-  /* Paleta de Cores Baseada na Referência */
-  --bg-color: #F4F7FE;       /* Fundo geral cinza muito claro/azulado */
-  --sidebar-bg: #FFFFFF;     /* Fundo branco puro */
+  --bg-color: #F4F7FE;       
+  --sidebar-bg: #FFFFFF;     
   --card-bg: #FFFFFF;
   
-  /* Cores de Texto */
-  --text-primary: #2B3674;   /* Azul marinho bem escuro (mais sério que preto) */
-  --text-secondary: #A3AED0; /* Cinza para textos menos importantes */
+  /* -- Text collors */
+  --text-primary: #2B3674;   
+  --text-secondary: #A3AED0; 
   
-  /* Cor de Destaque (Branding) */
-  --primary-color: #05CD99;  /* Aquele verde menta da referência */
+  --primary-color: #05CD99;  
   --primary-hover: #04b386;
 
-  /* Sombras Suaves (Essencial para o visual "Clean") */
+  
   --shadow-sm: 0px 2px 5px rgba(112, 144, 176, 0.08);
   --shadow-md: 0px 4px 12px rgba(112, 144, 176, 0.15);
   
-  /* Arredondamento */
-  --radius: 20px;            /* Bordas arredondadas modernas */
+ 
+  --radius: 20px;            
 }
 
 * {
@@ -33,7 +31,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Utilitários */
 .flex { display: flex; }
 .col { flex-direction: column; }
 .center { align-items: center; justify-content: center; }

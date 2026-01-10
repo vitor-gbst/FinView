@@ -119,7 +119,7 @@ func GetProjectAnalysis(userID, projectID uint, analysisType string) (*analysis.
 
 	rows, err := f.GetRows(project.ConfigSheet)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to read '%s'", project.ConfigSheet)
+		return nil, fmt.Errorf("A aba '%s' não foi encontrada no arquivo Excel. Verifique o nome.", project.ConfigSheet)
 	}
 
 	valueColIndex := -1
@@ -137,10 +137,9 @@ func GetProjectAnalysis(userID, projectID uint, analysisType string) (*analysis.
 	}
 
 	if valueColIndex == -1 {
-		return nil, fmt.Errorf("value collumn '%s' not found on line %d", project.ConfigColumn, project.ConfigLine)
+		return nil, fmt.Errorf("A coluna de valor '%s' não foi encontrada na linha %d.", project.ConfigColumn, project.ConfigLine)
 	}
 
-	// Time series analysis if date column is configured
 	if dateColIndex != -1 {
 		var series []analysis.TimeSeriesDataPoint
 		for i := project.ConfigLine; i < len(rows); i++ {
@@ -151,13 +150,12 @@ func GetProjectAnalysis(userID, projectID uint, analysisType string) (*analysis.
 
 				val, err := strconv.ParseFloat(valStr, 64)
 				if err != nil {
-					continue // Skip rows where value is not a valid float
+					continue 
 				}
 
-				// Attempt to parse date in multiple common formats
 				date, err := parseDate(dateStr)
 				if err != nil {
-					continue // Skip rows where date is not in a recognized format
+					continue 
 				}
 
 				series = append(series, analysis.TimeSeriesDataPoint{Date: date, Value: val})
@@ -166,7 +164,6 @@ func GetProjectAnalysis(userID, projectID uint, analysisType string) (*analysis.
 		return analysis.CalculateTimeSeriesAnalysis(series, analysisType, project.ConfigColumn), nil
 	}
 
-	// Fallback to basic analysis if no date column is set
 	var data []float64
 	for i := project.ConfigLine; i < len(rows); i++ {
 		row := rows[i]

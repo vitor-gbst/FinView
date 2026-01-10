@@ -1,30 +1,30 @@
-/* Container que centraliza tudo na tela */
+
 .auth-container {
   min-height: 100vh;
   width: 100%;
-  background-color: var(--bg-color); /* Mesmo fundo do dashboard */
+  background-color: var(--bg-color); 
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
 }
 
-/* O Cartão Branco */
+
 .auth-card {
   background-color: var(--card-bg);
   width: 100%;
-  max-width: 450px; /* Largura ideal para leitura */
+  max-width: 450px; 
   padding: 40px;
-  border-radius: var(--radius); /* 20px, definido no index.css */
+  border-radius: var(--radius); 
   box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Cabeçalho do Card */
+
 .auth-header {
-  text-align: left; /* Alinhado à esquerda é mais moderno que centralizado */
+  text-align: left; 
   margin-bottom: 10px;
 }
 
@@ -40,14 +40,14 @@
   font-size: 16px;
 }
 
-/* Formulário */
+
 .auth-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Grupos de Input */
+
 .input-group {
   display: flex;
   flex-direction: column;
@@ -62,8 +62,8 @@
 
 .input-group input {
   padding: 16px 20px;
-  border-radius: 16px; /* Arredondamento suave no input */
-  border: 1px solid #E0E5F2; /* Borda cinza bem clara */
+  border-radius: 16px; 
+  border: 1px solid #E0E5F2; 
   background-color: #fff;
   font-size: 14px;
   color: var(--text-primary);
@@ -75,14 +75,14 @@
   color: #A3AED0;
 }
 
-/* Efeito de Foco na cor Menta */
+
 .input-group input:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 4px rgba(5, 205, 153, 0.1); /* Glow suave */
+  box-shadow: 0 0 0 4px rgba(5, 205, 153, 0.1); 
 }
 
-/* Botão Principal */
+
 .btn-primary {
   background-color: var(--primary-color);
   color: #fff;
@@ -100,7 +100,7 @@
   background-color: var(--primary-hover);
 }
 
-/* Links (Esqueci a senha / Cadastre-se) */
+
 .auth-footer {
   text-align: center;
   font-size: 14px;
@@ -119,7 +119,7 @@
   text-decoration: underline;
 }
 
-/* Checkbox customizado simples */
+
 .checkbox-group {
   display: flex;
   align-items: center;

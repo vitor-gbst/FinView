@@ -1,28 +1,29 @@
 import React, { useState } from 'react';
 import './UploadModal.css';
 import { projectService } from '../services/api';
+import Alert from './Alert/Alert';
 
 const UploadModal = ({ isOpen, onClose, onSuccess }) => {
-  // Estados do Passo 1 (Upload)
   const [projectName, setProjectName] = useState('');
   const [file, setFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
+  const [errorMessage, SetErrorMessage] = useState('');
 
-  // Estados do Passo 2 (Configuração)
-  const [step, setStep] = useState(1); // 1 = Upload, 2 = Config
+  
+  const [step, setStep] = useState(1); 
   const [projectId, setProjectId] = useState(null);
   const [config, setConfig] = useState({
-    sheet: 'Planilha1',   // Nome da aba no Excel
-    column: '',           // Nome da coluna de valor (Ex: Valor, Preço)
-    date_column: '',      // Nome da coluna de data (Ex: Data, Dia)
-    line: 2               // Linha onde começam os dados (geralmente 2, pois 1 é cabeçalho)
+    sheet: 'Planilha1',   
+    column: '',           
+    date_column: '',      
+    line: 2               
   });
 
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  // --- Funções de Drag and Drop ---
+  
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -37,7 +38,6 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
   };
 
-  // --- PASSO 1: ENVIAR ARQUIVO ---
   const handleUpload = async (e) => {
     e.preventDefault();
     if (!projectName || !file) return;
@@ -45,33 +45,31 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
     setLoading(true);
     try {
       const response = await projectService.upload(projectName, file);
-      // Sucesso! O backend devolve o projeto criado.
-      // Vamos salvar o ID dele e ir para o passo 2.
+      
       setProjectId(response.data.project.ID);
       setStep(2); 
     } catch (error) {
       console.error("Erro no upload", error);
       alert("Erro ao enviar arquivo.");
-      setLoading(false); // Só para loading se der erro, se der sucesso continua loading visualmente ou troca de tela
+      setLoading(false); 
     } finally {
       if(step === 1) setLoading(false);
     }
   };
 
-  // --- PASSO 2: CONFIGURAR COLUNAS ---
   const handleConfig = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Precisamos converter 'line' para número inteiro
+      
       await projectService.updateSettings(projectId, {
         ...config,
         line: parseInt(config.line)
       });
       
-      // Agora sim, tudo pronto!
-      onSuccess(); // Avisa o dashboard para recarregar
-      handleClose(); // Reseta e fecha
+      
+      onSuccess(); 
+      handleClose(); 
     } catch (error) {
       console.error("Erro na configuração", error);
       alert("Erro ao salvar configurações. Verifique os dados.");
@@ -81,7 +79,7 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
   };
 
   const handleClose = () => {
-    // Reseta tudo ao fechar
+    
     setStep(1);
     setProjectName('');
     setFile(null);
@@ -95,7 +93,7 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         
         {step === 1 ? (
-          /* ================= PASSO 1: UPLOAD ================= */
+          /* --- Upload the excel file -- */
           <form onSubmit={handleUpload}>
             <div className="modal-header">
               <h2>Novo Projeto</h2>
@@ -147,7 +145,7 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
             </div>
           </form>
         ) : (
-          /* ================= PASSO 2: CONFIGURAÇÃO ================= */
+          /* --- Config   */
           <form onSubmit={handleConfig}>
             <div className="modal-header">
               <h2>Mapear Dados</h2>
@@ -199,6 +197,12 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
               />
               <small style={{color: '#A3AED0', fontSize: '11px'}}>Linha onde começam os dados reais (pule o cabeçalho)</small>
             </div>
+
+            <Alert 
+           type="error" 
+           message={errorMessage} 
+           onClose={() => setErrorMessage('')}
+        />
 
             <div className="modal-actions" style={{ marginTop: '25px' }}>
               <button type="submit" className="btn-primary" disabled={loading} style={{width: '100%'}}>

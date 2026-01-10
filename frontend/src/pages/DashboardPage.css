@@ -1,98 +1,119 @@
-/* Layout Geral */
 .layout-container {
   display: flex;
   min-height: 100vh;
-  background-color: var(--bg-color);
+  background-color: #F4F7FE; 
 }
 
-/* Área principal (direita da sidebar) */
 .main-content {
-  margin-left: 290px; /* Largura da Sidebar */
+  margin-left: 250px; /* Largura da Sidebar Desktop */
   padding: 30px;
-  width: 100%;
+  width: calc(100% - 250px);
+  transition: margin 0.3s ease-in-out, width 0.3s ease-in-out;
 }
 
-/* Cabeçalho */
-.dashboard-header {
-  margin-bottom: 30px;
-}
-.breadcrumb {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
 .dashboard-header h1 {
   font-size: 34px;
-  color: var(--text-primary);
   font-weight: 700;
+  color: #2B3674;
 }
 
-/* Grid de Estatísticas (KPIs) */
-.stats-grid {
+.projects-grid-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
-  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
-/* Grid de Gráficos (Assimetria: 2/3 para o principal, 1/3 para o secundário) */
-.charts-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 20px;
-  margin-bottom: 20px;
-  min-height: 350px;
-}
-
-/* Estilo Base dos Cards (O "Vidro" branco) */
-.card {
-  background-color: var(--card-bg);
-  border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: var(--shadow-md);
+.project-list-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.02);
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s;
 }
 
-/* Estilos específicos dos Cards de Stat */
-.stat-card {
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-.stat-info span {
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-.stat-info h4 {
-  font-size: 24px;
-  margin-top: 5px;
-  color: var(--text-primary);
-}
-.stat-percentage {
-  background-color: #E6FBF5; /* Verde bem clarinho */
-  color: var(--primary-color);
-  padding: 5px 10px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: bold;
+.project-list-card:hover {
+
+  box-shadow: 0px 10px 20px rgba(0,0,0,0.05);
 }
 
-/* Placeholders dos gráficos */
-.chart-placeholder {
-  flex: 1;
-  background-color: #f8f9fa;
-  border-radius: 10px;
-  border: 1px dashed #d1d5db;
+.project-icon {
+  width: 50px;
+  height: 50px;
+  /* Fundo verde bem clarinho para combinar */
+  background-color: #E6FBF5; 
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #9ca3af;
-  margin-top: 15px;
+  font-size: 24px;
+  margin-bottom: 15px;
+  /* A cor do ícone agora é o Verde da marca */
+  color: #05CD99; 
+}
+.project-info h3 {
+  margin: 0 0 5px 0;
+  color: #2B3674;
+  font-size: 18px;
 }
 
-/* Responsividade Básica */
-@media (max-width: 1024px) {
-  .charts-grid {
-    grid-template-columns: 1fr; /* Um gráfico embaixo do outro em telas menores */
+.project-info p {
+  margin: 0;
+  color: #A3AED0;
+  font-size: 14px;
+}
+
+.btn-view-analysis {
+  margin-top: 20px;
+  background-color: transparent;
+  /* Borda Verde */
+  border: 1px solid #05CD99; 
+  /* Texto Verde */
+  color: #05CD99;            
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-view-analysis:hover {
+  /* Fica verde sólido igual ao botão "Novo Projeto" */
+  background-color: #05CD99; 
+  color: white;
+  box-shadow: 0 4px 12px rgba(5, 205, 153, 0.2); /* Sombra suave esverdeada */
+}
+
+.empty-state-container {
+  text-align: center;
+  padding: 50px;
+  color: #A3AED0;
+}
+
+/* RESPONSIVIDADE: No celular, a margem some */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;       /* Sidebar flutua por cima, então margem é 0 */
+    width: 100%;          /* Ocupa a tela toda */
+    padding: 20px;        /* Padding menor no celular */
+    padding-top: 60px;    /* Espaço para não ficar embaixo do botão hamburguer */
+  }
+  
+  /* Ajuste das grids para ficarem uma embaixo da outra no celular */
+  .stats-grid, .charts-grid, .projects-grid, .projects-grid-list {
+    grid-template-columns: 1fr !important; /* Força 1 coluna */
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .dashboard-header button {
+    width: 100%; /* Botão ocupa largura total no celular */
+    justify-content: center;
   }
 }

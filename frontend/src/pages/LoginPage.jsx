@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext'; // Importante: Conecta com o Contexto
+import { useAuth } from '../contexts/AuthContext'; 
 import './LoginPage.css';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
-  // Pegamos a função de login e o estado de autenticação do contexto
+  
   const { login, isAuthenticated, error, loading } = useAuth(); 
   const navigate = useNavigate();
 
-  // Efeito: Assim que o usuário for autenticado (isAuthenticated virar true), muda de página
+  
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/dashboard');
@@ -20,7 +20,7 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    // Chama a função real que bate no backend Go
+    
     await login(email, password);
   };
 
@@ -33,7 +33,7 @@ const LoginPage = () => {
           <p>Digite seu email e senha para acessar.</p>
         </div>
 
-        {/* Exibe mensagem de erro se o login falhar */}
+        {}
         {error && (
           <div style={{
             backgroundColor: '#fee2e2',

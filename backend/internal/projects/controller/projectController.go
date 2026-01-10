@@ -9,6 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+
+// --- UploadProject upload project from the user ---
 func UploadProject(c *gin.Context) {
 	userInterface, exists := c.Get("user")
 	if !exists {

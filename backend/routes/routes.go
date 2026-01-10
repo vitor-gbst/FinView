@@ -13,6 +13,7 @@ func SetupRoutes(r *gin.Engine) {
 	r.POST("/signup", userController.Signup)
 	r.POST("/login", userController.Login)
 	r.GET("/validate", middleware.RequireAuth, userController.Validate)
+	r.POST("/logout", userController.Logout)
 
 
 	// --- Project Routes ---

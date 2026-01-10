@@ -3,6 +3,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import ProjectAnalysisPage from './pages/ProjectAnalysisPage';
 
 function App() {
   return (
@@ -11,20 +12,30 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
 
-        {/* 1. Rota Principal: /dashboard */}
+        
         <Route 
           path="/dashboard" 
           element={
             <ProtectedRoute>
               <DashboardPage />
+
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/project/:id" 
+          element={
+            <ProtectedRoute>
+              <ProjectAnalysisPage />
+
             </ProtectedRoute>
           } 
         />
 
-        {/* 2. Redirecionamento: Se acessar a raiz "/", joga para "/dashboard" */}
+        
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-        {/* 3. Catch-all: Qualquer rota desconhecida joga para o dashboard */}
+        
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>

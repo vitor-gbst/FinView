@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import './LoginPage.css'; // Usa o mesmo estilo do Login para manter o padrão
-
+import './LoginPage.css'; 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -12,7 +11,7 @@ const SignupPage = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const { signup } = useAuth(); // Pega a função do contexto
+  const { signup } = useAuth(); 
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -22,7 +21,6 @@ const SignupPage = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    // 1. Validação básica de senha no Frontend
     if (formData.password !== formData.confirmPassword) {
       alert("As senhas não coincidem!");
       return;
@@ -35,10 +33,9 @@ const SignupPage = () => {
 
     setLoading(true);
 
-    // 2. Chama a função de cadastro
-    // Nota: O objeto abaixo deve bater com o que seu Backend Go espera no c.BindJSON
+    
     const success = await signup({
-      // Se o seu User struct no Go não tiver "Name", o backend pode ignorar este campo
+      
       name: formData.name, 
       email: formData.email,
       password: formData.password
@@ -50,7 +47,7 @@ const SignupPage = () => {
       alert("Conta criada com sucesso! Faça login para continuar.");
       navigate('/login');
     }
-    // Se der erro, o AuthContext já define o estado de erro, você pode exibir se quiser
+    
   };
 
   return (
@@ -64,7 +61,7 @@ const SignupPage = () => {
 
         <form className="auth-form" onSubmit={handleSignup}>
           
-          {/* Campo Nome */}
+          
           <div className="input-group">
             <label htmlFor="name">Nome Completo</label>
             <input 
@@ -73,11 +70,11 @@ const SignupPage = () => {
               placeholder="Seu nome" 
               value={formData.name}
               onChange={handleChange}
-              // required // Tire o comentário se o nome for obrigatório no banco
+              required 
             />
           </div>
 
-          {/* Campo Email */}
+          
           <div className="input-group">
             <label htmlFor="email">Email</label>
             <input 
@@ -90,7 +87,7 @@ const SignupPage = () => {
             />
           </div>
 
-          {/* Campo Senha */}
+          
           <div className="input-group">
             <label htmlFor="password">Senha</label>
             <input 
@@ -103,7 +100,7 @@ const SignupPage = () => {
             />
           </div>
 
-          {/* Campo Confirmar Senha */}
+          
           <div className="input-group">
             <label htmlFor="confirmPassword">Confirmar Senha</label>
             <input 

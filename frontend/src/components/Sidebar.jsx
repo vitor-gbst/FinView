@@ -1,53 +1,118 @@
-import React from 'react';
-// Você pode usar ícones da biblioteca que preferir (ex: lucide-react, react-icons)
-// Aqui vou usar texto simples simulando ícones por enquanto
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import './Sidebar.css';
+import { authService } from '../services/api';
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+  const location = useLocation(); // Hook para saber a URL atual
+  const [isOpen, setIsOpen] = useState(false); // Estado para abrir/fechar no mobile
+
+  // Função para saber se o item está ativo
+  const isActive = (path) => location.pathname === path;
+
+  // Função de Navegação
+  const handleNavigate = (path) => {
+    navigate(path);
+    setIsOpen(false); // Fecha o menu se estiver no celular
+  };
+
+  // Função de Logout
+  const handleLogout = async () => {
+    try {
+      // 1. Avisa o backend para matar o cookie
+      await authService.logout();
+      
+      // 2. (Opcional) Se você usar Context/Localstorage, limpe aqui também
+      // localStorage.removeItem('user_data'); 
+      
+      // 3. Agora sim, redireciona. Sem o cookie, o ProtectedRoute não vai deixar voltar.
+      navigate('/login');
+    } catch (error) {
+      console.error("Erro ao sair", error);
+      // Mesmo se der erro na API, forçamos o usuário para o login
+      navigate('/login');
+    }
+  };
+
   return (
-    <div style={{
-      width: '290px',
-      backgroundColor: 'var(--sidebar-bg)',
-      height: '100vh',
-      padding: '30px',
-      display: 'flex',
-      flexDirection: 'column',
-      position: 'fixed', // Sidebar fixa
-      left: 0,
-      top: 0
-    }}>
-      {/* Logo */}
-      <div style={{ marginBottom: '50px', fontSize: '24px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-        FINANÇAS <span style={{ color: 'var(--primary-color)' }}>PRO</span>
-      </div>
+    <>
+      {/* Botão Mobile (Hambúrguer) */}
+      <button 
+        className="mobile-toggle" 
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {isOpen ? '✕' : '☰'} 
+      </button>
 
-      {/* Menu */}
-      <nav style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <MenuItem active>Dashboard</MenuItem>
-        <MenuItem>Transações</MenuItem>
-        <MenuItem>Relatórios</MenuItem>
-        <MenuItem>Configurações</MenuItem>
-      </nav>
+      {/* Fundo Escuro (Só aparece no mobile quando aberto) */}
+      <div 
+        className={`sidebar-overlay ${isOpen ? 'open' : ''}`} 
+        onClick={() => setIsOpen(false)}
+      />
 
-      {/* Footer do Menu */}
-      <div style={{ marginTop: 'auto', color: 'var(--text-secondary)' }}>
-        <p>Sair</p>
+      {/* Sidebar Principal */}
+      <div className={`sidebar-container ${isOpen ? 'open' : ''}`}>
+        
+        {/* Logo */}
+        <div className="logo" onClick={() => handleNavigate('/dashboard')} style={{cursor: 'pointer'}}>
+          FINANÇAS <span>PRO</span>
+        </div>
+
+        {/* Menu */}
+        <nav className="menu-nav">
+          <MenuItem 
+            active={isActive('/dashboard')} 
+            onClick={() => handleNavigate('/dashboard')}
+            icon="📊" // Você pode trocar por ícones SVG depois
+          >
+            Dashboard
+          </MenuItem>
+
+          <MenuItem 
+            active={isActive('/transactions')} // Exemplo de rota futura
+            onClick={() => handleNavigate('/transactions')} // Ainda não existe, pode deixar sem ação ou alert
+            icon="💸"
+          >
+            Transações
+          </MenuItem>
+
+          <MenuItem 
+            active={isActive('/reports')} 
+            onClick={() => alert('Em breve')}
+            icon="📈"
+          >
+            Relatórios
+          </MenuItem>
+
+          <MenuItem 
+            active={isActive('/settings')} 
+            onClick={() => alert('Em breve')}
+            icon="⚙️"
+          >
+            Configurações
+          </MenuItem>
+        </nav>
+
+        {/* Footer / Logout */}
+        <div className="menu-footer">
+          <div className="menu-item logout-btn" onClick={handleLogout}>
+            <span style={{ marginRight: '10px' }}>🚪</span>
+            Sair
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
-// Componente auxiliar simples para o item do menu
-const MenuItem = ({ children, active }) => (
-  <div style={{
-    color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
-    fontWeight: active ? 'bold' : 'normal',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    paddingLeft: active ? '0' : '5px',
-    borderRight: active ? '4px solid var(--primary-color)' : 'none'
-  }}>
+// Componente auxiliar de item (agora aceita onClick e Icon)
+const MenuItem = ({ children, active, onClick, icon }) => (
+  <div 
+    className={`menu-item ${active ? 'active' : ''}`} 
+    onClick={onClick}
+  >
+    {icon && <span style={{ width: '24px', textAlign: 'center' }}>{icon}</span>}
     {children}
   </div>
 );
