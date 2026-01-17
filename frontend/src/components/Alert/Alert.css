@@ -24,7 +24,7 @@
   border: 1px solid transparent;
 }
 
-/* Tipos de Alerta */
+/* Alert types */
 .alert-error {
   background-color: var(--bg-error);
   color: var(--text-error);
@@ -62,7 +62,7 @@
   margin-left: 12px;
   opacity: 0.6;
   font-size: 1.1rem;
-  color: inherit; /* Herda a cor do texto do alerta */
+  color: inherit;
   padding: 0;
   line-height: 1;
 }

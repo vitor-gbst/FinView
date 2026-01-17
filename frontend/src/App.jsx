@@ -4,9 +4,11 @@ import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProjectAnalysisPage from './pages/ProjectAnalysisPage';
+import { ToastProvider } from './contexts/ToastContext';
 
 function App() {
   return (
+    <ToastProvider>
     <Router>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
@@ -39,7 +41,9 @@ function App() {
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>
+    </ToastProvider>
   );
+  
 }
 
 export default App;

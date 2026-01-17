@@ -1,9 +1,8 @@
 import axios from 'axios';
 
-// 1. Configuração do Axios (Para funcionar com Cookies do Go)
 const api = axios.create({
-  baseURL: 'http://localhost:3000', // Confirme se a porta é essa mesmo
-  withCredentials: true,            // IMPORTANTE: Permite enviar/receber cookies
+  baseURL: 'http://localhost:3000', 
+  withCredentials: true,            
   headers: {
     'Content-Type': 'application/json',
   },
@@ -27,26 +26,22 @@ api.interceptors.response.use(
   }
 );
 
-// 2. Serviços de Autenticação
+
 export const authService = {
-  // Login envia email/senha e o Go define o Cookie HttpOnly
   login: (email, password) => api.post('/login', { email, password }),
   
   signup: (userData) => api.post('/signup', userData),
   
   logout: () => api.post('/logout'),
   
-  // Validate checa se o cookie de sessão ainda é válido
   validate: () => api.get('/validate'),
 };
 
-// 3. Serviços de Projetos (O que estava faltando)
 export const projectService = {
-  // Upload precisa de tratamento especial para FormData
   upload: (name, file) => {
     const formData = new FormData();
     formData.append('name', name);
-    formData.append('project_file', file); // O nome 'project_file' deve bater com o backend Go
+    formData.append('project_file', file); 
     
     return api.post('/projects/', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -54,12 +49,22 @@ export const projectService = {
   },
 
   updateSettings: (id, settings) => api.put(`/projects/${id}/settings`, settings),
-  // Lista todos os projetos
   getAll: () => api.get('/projects/'),
 
-  // Busca dados analíticos
   getAnalysis: (projectId, type = 'full_analysis') => 
     api.get(`/projects/${projectId}/analysis?type=${type}`),
+
+  updateFile: (id, file) => {
+    const formData = new FormData();
+    formData.append('project_file', file);
+    
+    return api.put(`/projects/${id}/file`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+  delete: (id) => api.delete(`/projects/${id}`),
 };
+
+
 
 export default api;

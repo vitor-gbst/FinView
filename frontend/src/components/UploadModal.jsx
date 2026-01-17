@@ -7,15 +7,15 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
   const [projectName, setProjectName] = useState('');
   const [file, setFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
-  const [errorMessage, SetErrorMessage] = useState('');
-
   
+  const [errorMessage, setErrorMessage] = useState(''); 
+
   const [step, setStep] = useState(1); 
   const [projectId, setProjectId] = useState(null);
   const [config, setConfig] = useState({
     sheet: 'Planilha1',   
-    column: '',           
-    date_column: '',      
+    column: 'B',           
+    date_column: 'A',      
     line: 2               
   });
 
@@ -23,7 +23,6 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
 
   if (!isOpen) return null;
 
-  
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -38,20 +37,30 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
   };
 
+  const handleClose = () => {
+    setStep(1);
+    setProjectName('');
+    setFile(null);
+    setProjectId(null);
+    setConfig({ sheet: 'Planilha1', column: 'B', date_column: 'A', line: 2 });
+    setErrorMessage('');
+    onClose();
+  };
+
   const handleUpload = async (e) => {
     e.preventDefault();
     if (!projectName || !file) return;
 
     setLoading(true);
+    setErrorMessage(''); 
+
     try {
       const response = await projectService.upload(projectName, file);
-      
       setProjectId(response.data.project.ID);
       setStep(2); 
     } catch (error) {
       console.error("Erro no upload", error);
-      alert("Erro ao enviar arquivo.");
-      setLoading(false); 
+      setErrorMessage(error.response?.data?.error || "Erro ao enviar arquivo.");
     } finally {
       if(step === 1) setLoading(false);
     }
@@ -60,32 +69,22 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
   const handleConfig = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMessage('');
+
     try {
-      
       await projectService.updateSettings(projectId, {
         ...config,
         line: parseInt(config.line)
       });
       
-      
       onSuccess(); 
       handleClose(); 
     } catch (error) {
       console.error("Erro na configuração", error);
-      alert("Erro ao salvar configurações. Verifique os dados.");
+      setErrorMessage("Erro ao salvar configurações. Verifique os dados.");
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleClose = () => {
-    
-    setStep(1);
-    setProjectName('');
-    setFile(null);
-    setProjectId(null);
-    setConfig({ sheet: 'Planilha1', column: '', date_column: '', line: 2 });
-    onClose();
   };
 
   return (
@@ -93,18 +92,48 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         
         {step === 1 ? (
-          /* --- Upload the excel file -- */
           <form onSubmit={handleUpload}>
             <div className="modal-header">
               <h2>Novo Projeto</h2>
               <p>Passo 1/2: Importe sua planilha (Excel).</p>
             </div>
 
+            <div className="format-guide">
+                <p className="guide-title">💡 Como preparar sua planilha:</p>
+                <div className="mini-excel">
+                    <div className="excel-header">
+                        <span>A (Data)</span>
+                        <span>B (Valor)</span>
+                        <span>C (Desc)</span>
+                    </div>
+                    <div className="excel-row">
+                        <span>01/01/2026</span>
+                        <span className="negative">-150,00</span>
+                        <span className="text-muted">Luz</span>
+                    </div>
+                    <div className="excel-row">
+                        <span>05/01/2026</span>
+                        <span className="positive">5.000,00</span>
+                        <span className="text-muted">Venda</span>
+                    </div>
+                </div>
+                <ul className="guide-tips">
+                    <li>Coluna de <strong>Data</strong> é obrigatória.</li>
+                    <li>Use <strong>negativo (-)</strong> para gastos.</li>
+                </ul>
+            </div>
+
+            <Alert 
+               type="error" 
+               message={errorMessage} 
+               onClose={() => setErrorMessage('')}
+            />
+
             <div className="input-group" style={{ marginBottom: '20px' }}>
               <label>Nome do Projeto</label>
               <input 
                 type="text" 
-                placeholder="Ex: Finanças 2024" 
+                placeholder="Ex: Fluxo de Caixa 2026" 
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
                 required
@@ -123,9 +152,7 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
                 <input id="file-input" type="file" hidden accept=".xlsx, .xls, .csv"
                   onChange={(e) => setFile(e.target.files[0])} 
                 />
-                <svg className="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
+                <span style={{fontSize: '28px'}}>📂</span>
                 <p style={{color: 'var(--text-secondary)'}}>
                   <span style={{color: 'var(--primary-color)', fontWeight: 'bold'}}>Clique para enviar</span> ou arraste
                 </p>
@@ -145,12 +172,17 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
             </div>
           </form>
         ) : (
-          /* --- Config   */
           <form onSubmit={handleConfig}>
             <div className="modal-header">
               <h2>Mapear Dados</h2>
               <p>Passo 2/2: Onde estão os dados no seu Excel?</p>
             </div>
+
+            <Alert 
+               type="error" 
+               message={errorMessage} 
+               onClose={() => setErrorMessage('')}
+            />
 
             <div className="input-group" style={{ marginBottom: '15px' }}>
               <label>Nome da Aba (Sheet)</label>
@@ -169,21 +201,23 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
                 <label>Coluna de Valor</label>
                 <input 
                   type="text" 
-                  placeholder="Ex: Valor" 
+                  placeholder="Ex: B" 
                   value={config.column}
                   onChange={(e) => setConfig({...config, column: e.target.value})}
                   required
                 />
+                <small style={{color: '#05CD99', fontSize: '11px'}}>Valores (+) e (-)</small>
               </div>
               
               <div className="input-group" style={{ flex: 1 }}>
                 <label>Coluna de Data</label>
                 <input 
                   type="text" 
-                  placeholder="Ex: Data" 
+                  placeholder="Ex: A" 
                   value={config.date_column}
                   onChange={(e) => setConfig({...config, date_column: e.target.value})}
                 />
+                <small style={{color: '#05CD99', fontSize: '11px'}}>Obrigatório p/ Runway</small>
               </div>
             </div>
 
@@ -198,15 +232,9 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
               <small style={{color: '#A3AED0', fontSize: '11px'}}>Linha onde começam os dados reais (pule o cabeçalho)</small>
             </div>
 
-            <Alert 
-           type="error" 
-           message={errorMessage} 
-           onClose={() => setErrorMessage('')}
-        />
-
             <div className="modal-actions" style={{ marginTop: '25px' }}>
               <button type="submit" className="btn-primary" disabled={loading} style={{width: '100%'}}>
-                {loading ? 'Salvando...' : 'Concluir e Analisar'}
+                {loading ? 'Calculando...' : 'Concluir e Analisar'}
               </button>
             </div>
           </form>

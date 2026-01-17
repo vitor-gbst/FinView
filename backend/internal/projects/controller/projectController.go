@@ -10,7 +10,6 @@ import (
 )
 
 
-// --- UploadProject upload project from the user ---
 func UploadProject(c *gin.Context) {
 	userInterface, exists := c.Get("user")
 	if !exists {
@@ -61,6 +60,39 @@ type settingsInput struct {
 	Column     string `json:"column" binding:"required"`
 	DateColumn string `json:"date_column"`
 	Line       int    `json:"line" binding:"required"`
+}
+
+func UpdateProjectFile(c *gin.Context) {
+    userInterface, exists := c.Get("user")
+    if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "Não autorizado"})
+        return
+    }
+    user := userInterface.(userModel.User)
+
+    idStr := c.Param("id")
+    projectID, err := strconv.ParseUint(idStr, 10, 32)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+        return
+    }
+
+    file, err := c.FormFile("project_file")
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Arquivo é obrigatório"})
+        return
+    }
+
+    project, err := service.UpdateProjectFile(user.ID, uint(projectID), file)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar arquivo: " + err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{
+        "message": "Arquivo atualizado com sucesso!",
+        "project": project,
+    })
 }
 
 func UpdateProjectSettings(c *gin.Context) {
@@ -115,4 +147,24 @@ func GetProjectAnalysis(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, result)
+}
+
+func DeleteProject(c *gin.Context) {
+    userInterface, _ := c.Get("user")
+    user := userInterface.(userModel.User)
+
+    idStr := c.Param("id")
+    projectID, err := strconv.ParseUint(idStr, 10, 32)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+        return
+    }
+
+    err = service.DeleteProject(user.ID, uint(projectID))
+    if err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Erro ao deletar projeto: " + err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"message": "Projeto deletado com sucesso"})
 }

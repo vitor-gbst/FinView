@@ -25,6 +25,8 @@ func SetupRoutes(r *gin.Engine) {
 		projectRoutes.GET("/", projectController.GetUserProjects)
 		projectRoutes.GET("/:id/analysis", projectController.GetProjectAnalysis)
 		projectRoutes.PUT("/:id/settings", projectController.UpdateProjectSettings)
+		projectRoutes.PUT("/:id/file", projectController.UpdateProjectFile)
+		projectRoutes.DELETE("/:id", projectController.DeleteProject)
 
 	}
 }

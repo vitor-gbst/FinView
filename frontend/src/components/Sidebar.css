@@ -1,9 +1,7 @@
-/* Sidebar.css */
 
-/* --- Estilo Base (Desktop) --- */
 .sidebar-container {
-  width: 250px; /* Reduzi um pouco de 290px para ficar mais padrão */
-  background-color: white; /* Ou var(--sidebar-bg) se tiver definido */
+  width: 250px; 
+  background-color: white; 
   height: 100vh;
   padding: 30px;
   display: flex;
@@ -20,11 +18,11 @@
   margin-bottom: 50px;
   font-size: 24px;
   font-weight: bold;
-  color: #2B3674; /* var(--text-primary) */
+  color: #2B3674; 
 }
 
 .logo span {
-  color: #05CD99; /* Verde da marca */
+  color: #05CD99; 
 }
 
 .menu-nav {
@@ -39,9 +37,8 @@
   border-top: 1px solid #eee;
 }
 
-/* Item do Menu */
 .menu-item {
-  color: #A3AED0; /* var(--text-secondary) */
+  color: #A3AED0;
   cursor: pointer;
   display: flex;
   align-items: center;

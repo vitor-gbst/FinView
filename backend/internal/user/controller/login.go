@@ -69,9 +69,7 @@ func Login(c *gin.Context){
 }
 
 func Logout(c *gin.Context) {
-    // Definindo o cookie com valor vazio e tempo de vida negativo (-1)
-    // IMPORTANTE: O nome "Authorization", o path, o secure e o httpOnly 
-    // devem ser IGUAIS aos que você usou na função Login.
+    
     c.SetCookie("Authorization", "", -1, "/", "", false, true)
 
     c.JSON(http.StatusOK, gin.H{

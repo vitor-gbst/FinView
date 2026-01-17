@@ -12,13 +12,14 @@ import (
 	"strconv"
 	"time"
 
+	"strings"
+
 	"github.com/xuri/excelize/v2"
 	"gorm.io/gorm"
 )
 
 const uploadDir = "./uploads"
 
-// ---Create a new project ---
 func CreateProject(file *multipart.FileHeader, userID uint, projectName string) (*model.Project, error) {
 	src, err := file.Open()
 	if err != nil {
@@ -63,7 +64,6 @@ func CreateProject(file *multipart.FileHeader, userID uint, projectName string) 
 	return &project, nil
 }
 
-// --- Get Users project ---
 func GetProjectsForUser(userID uint) ([]model.Project, error) {
 	var projects []model.Project
 	result := initializers.DB.Where("user_id = ?", userID).Find(&projects)
@@ -73,7 +73,6 @@ func GetProjectsForUser(userID uint) ([]model.Project, error) {
 	return projects, nil
 }
 
-// --- Update project settings --
 func UpdateProjectSettings(userID, projectID uint, sheet, column, dateColumn string, line int) (*model.Project, error) {
 	var project model.Project
 
@@ -98,7 +97,54 @@ func UpdateProjectSettings(userID, projectID uint, sheet, column, dateColumn str
 	return &project, nil
 }
 
-// --- GetProjectAnalysis exec analisys ---
+func UpdateProjectFile(userID, projectID uint, file *multipart.FileHeader) (*model.Project, error) {
+    var project model.Project
+
+    
+    result := initializers.DB.First(&project, "id = ? AND user_id = ?", projectID, userID)
+    if result.Error != nil {
+        return nil, fmt.Errorf("Projeto não encontrado ou acesso negado")
+    }
+
+    if project.ArqPath != "" {
+        _ = os.Remove(project.ArqPath) 
+    }
+
+    src, err := file.Open()
+    if err != nil {
+        return nil, err
+    }
+    defer src.Close()
+
+    userUploadDir := filepath.Join(uploadDir, fmt.Sprintf("user_%d", userID))
+    os.MkdirAll(userUploadDir, os.ModePerm)
+
+    ext := filepath.Ext(file.Filename)
+    
+    safeFilename := fmt.Sprintf("%d_%s", time.Now().Unix(), "upd"+ext) 
+    storagePath := filepath.Join(userUploadDir, safeFilename)
+
+    dst, err := os.Create(storagePath)
+    if err != nil {
+        return nil, err
+    }
+    defer dst.Close()
+
+    if _, err = io.Copy(dst, src); err != nil {
+        return nil, err
+    }
+
+    project.ArqPath = storagePath
+    project.OriginalFilename = file.Filename
+    
+
+    if err := initializers.DB.Save(&project).Error; err != nil {
+        return nil, err
+    }
+
+    return &project, nil
+}
+
 func GetProjectAnalysis(userID, projectID uint, analysisType string) (*analysis.AnalysisResult, error) {
 	var project model.Project
 
@@ -148,10 +194,13 @@ func GetProjectAnalysis(userID, projectID uint, analysisType string) (*analysis.
 				valStr := row[valueColIndex]
 				dateStr := row[dateColIndex]
 
-				val, err := strconv.ParseFloat(valStr, 64)
-				if err != nil {
-					continue 
-				}
+				val, err := parseBrazilianNumber(valStr) 
+                if err != nil {
+                     val, err = strconv.ParseFloat(valStr, 64)
+                     if err != nil {
+                        continue 
+                     }
+                }
 
 				date, err := parseDate(dateStr)
 				if err != nil {
@@ -194,4 +243,31 @@ func parseDate(dateStr string) (time.Time, error) {
 		}
 	}
 	return time.Time{}, fmt.Errorf("unable to parse date: %s", dateStr)
+}
+
+
+func parseBrazilianNumber(valStr string) (float64, error) {
+    cleanStr := strings.ReplaceAll(valStr, "R$", "")
+    cleanStr = strings.ReplaceAll(cleanStr, " ", "")
+    cleanStr = strings.ReplaceAll(cleanStr, ".", "") 
+
+    
+    cleanStr = strings.ReplaceAll(cleanStr, ",", ".")
+
+    return strconv.ParseFloat(cleanStr, 64)
+}
+
+func DeleteProject(userID, projectID uint) error {
+    var project model.Project
+
+    result := initializers.DB.First(&project, "id = ? AND user_id = ?", projectID, userID)
+    if result.Error != nil {
+        return result.Error 
+    }
+
+    if project.ArqPath != "" {
+        os.Remove(project.ArqPath)
+    }
+
+    return initializers.DB.Unscoped().Delete(&project).Error
 }

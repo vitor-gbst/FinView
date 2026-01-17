@@ -5,7 +5,7 @@
 }
 
 .main-content {
-  margin-left: 250px; /* Largura da Sidebar Desktop */
+  margin-left: 250px;
   padding: 30px;
   width: calc(100% - 250px);
   transition: margin 0.3s ease-in-out, width 0.3s ease-in-out;
@@ -32,17 +32,17 @@
   display: flex;
   flex-direction: column;
   transition: transform 0.2s;
+  
+  position: relative; 
 }
 
 .project-list-card:hover {
-
   box-shadow: 0px 10px 20px rgba(0,0,0,0.05);
 }
 
 .project-icon {
   width: 50px;
   height: 50px;
-  /* Fundo verde bem clarinho para combinar */
   background-color: #E6FBF5; 
   border-radius: 50%;
   display: flex;
@@ -50,9 +50,9 @@
   justify-content: center;
   font-size: 24px;
   margin-bottom: 15px;
-  /* A cor do ícone agora é o Verde da marca */
   color: #05CD99; 
 }
+
 .project-info h3 {
   margin: 0 0 5px 0;
   color: #2B3674;
@@ -63,14 +63,18 @@
   margin: 0;
   color: #A3AED0;
   font-size: 14px;
+  
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%; 
+  display: block;
 }
 
 .btn-view-analysis {
   margin-top: 20px;
   background-color: transparent;
-  /* Borda Verde */
   border: 1px solid #05CD99; 
-  /* Texto Verde */
   color: #05CD99;            
   padding: 10px;
   border-radius: 10px;
@@ -80,10 +84,45 @@
 }
 
 .btn-view-analysis:hover {
-  /* Fica verde sólido igual ao botão "Novo Projeto" */
   background-color: #05CD99; 
   color: white;
-  box-shadow: 0 4px 12px rgba(5, 205, 153, 0.2); /* Sombra suave esverdeada */
+  box-shadow: 0 4px 12px rgba(5, 205, 153, 0.2); 
+}
+
+.card-top-actions {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  gap: 8px; 
+  z-index: 10;
+}
+
+.btn-action {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #E0E5F2;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  color: #A3AED0;
+}
+
+.btn-update:hover {
+  background-color: #F0FDFA;
+  color: #05CD99;
+  border-color: #05CD99;
+}
+
+.btn-delete:hover {
+  background-color: #FFF5F5;
+  color: #E31A1A;
+  border-color: #E31A1A;
 }
 
 .empty-state-container {
@@ -92,18 +131,17 @@
   color: #A3AED0;
 }
 
-/* RESPONSIVIDADE: No celular, a margem some */
+
 @media (max-width: 768px) {
   .main-content {
-    margin-left: 0;       /* Sidebar flutua por cima, então margem é 0 */
-    width: 100%;          /* Ocupa a tela toda */
-    padding: 20px;        /* Padding menor no celular */
-    padding-top: 60px;    /* Espaço para não ficar embaixo do botão hamburguer */
+    margin-left: 0;       
+    width: 100%;          
+    padding: 20px;        
+    padding-top: 60px;   
   }
   
-  /* Ajuste das grids para ficarem uma embaixo da outra no celular */
   .stats-grid, .charts-grid, .projects-grid, .projects-grid-list {
-    grid-template-columns: 1fr !important; /* Força 1 coluna */
+    grid-template-columns: 1fr !important; 
   }
 
   .dashboard-header {
@@ -113,7 +151,19 @@
   }
   
   .dashboard-header button {
-    width: 100%; /* Botão ocupa largura total no celular */
+    width: 100%; 
     justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-header h1 {
+    font-size: 26px; 
+  }
+
+  .modal-content {
+    width: 95% !important;
+    padding: 20px !important;
+    margin: 10px;
   }
 }
