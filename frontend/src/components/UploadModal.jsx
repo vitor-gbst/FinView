@@ -149,7 +149,7 @@ const UploadModal = ({ isOpen, onClose, onSuccess }) => {
                 onDrop={handleDrop}
                 onClick={() => document.getElementById('file-input').click()}
               >
-                <input id="file-input" type="file" hidden accept=".xlsx, .xls, .csv"
+                <input id="file-input" type="file" hidden accept=".xlsx, .xls"
                   onChange={(e) => setFile(e.target.files[0])} 
                 />
                 <span style={{fontSize: '28px'}}>📂</span>
