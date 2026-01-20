@@ -1,21 +1,27 @@
 version: '3.8'
 
 services:
-  #Backend build
+  # Backend
   backend:
     build: ./backend
     container_name: finview-backend
     ports:
       - "8080:8080"
     environment:
-      - SECRET=SuaChaveSecretaSuperSeguraAqui
-      - PORT=8080
+      - SECRET=${SECRET} 
+      
+      - PORT=8080 
+      
+     
+      - DB=/app/database/finview.db
     volumes:
-    
-      - ./backend:/app 
-    restart: unless-stopped #To make database persist
+      - ./database:/app/database
+    restart: unless-stopped
 
-  # Front build
+    env_file:
+      - ./backend/.env
+
+  # Frontend
   frontend:
     build: ./frontend
     container_name: finview-frontend
