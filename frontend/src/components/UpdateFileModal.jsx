@@ -54,7 +54,7 @@ const UpdateFileModal = ({ isOpen, onClose, onSuccess, projectId }) => {
                 id="update-file-input" 
                 type="file" 
                 hidden 
-                accept=".xlsx, .xls, .csv"
+                accept=".xlsx, .xls"
                 onChange={(e) => setFile(e.target.files[0])} 
               />
               <span style={{fontSize: '24px'}}>🔄</span>
