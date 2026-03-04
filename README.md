@@ -1,4 +1,4 @@
-# 📊 FinView - Análise Financeira & Runway de Startups
+# 📊 FinançasPRO - Análise Financeira & Runway de Startups
 
 ![Status](https://img.shields.io/badge/STATUS-CONCLUÍDO-brightgreen?style=for-the-badge)
 ![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
@@ -6,7 +6,7 @@
 ![Docker](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
 
-> **FinView** é uma plataforma Full Stack para análise de saúde financeira. O sistema processa planilhas Excel (fluxo de caixa) e gera indicadores estratégicos como **Runway**, **Burn Rate** e **Previsão de Caixa** através de dashboards interativos.
+> **FinançasPRO** é uma plataforma Full Stack para análise de saúde financeira. O sistema processa planilhas Excel (fluxo de caixa) e gera indicadores estratégicos como **Runway**, **Burn Rate** e **Previsão de Caixa** através de dashboards interativos.
 
 ---
 
@@ -74,8 +74,8 @@ Clone o repositório:
 
 ```Bash
 
-git clone https://github.com/vitor-gbst/FinView.git
-cd finview
+git clone https://github.com/vitor-gbst/FinancasPRO.git
+cd financasPRO
 Configure as Variáveis de Ambiente: Crie um arquivo .env na pasta backend/ baseado no exemplo:
 ```
 ```Bash
