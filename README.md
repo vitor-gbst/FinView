@@ -75,7 +75,7 @@ Clone o repositório:
 ```Bash
 
 git clone https://github.com/vitor-gbst/FinancasPRO.git
-cd financasPRO
+cd FinancasPRO
 Configure as Variáveis de Ambiente: Crie um arquivo .env na pasta backend/ baseado no exemplo:
 ```
 ```Bash
