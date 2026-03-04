@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext'; 
 import './LoginPage.css'; 
+
 const SignupPage = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -13,6 +15,8 @@ const SignupPage = () => {
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth(); 
   const navigate = useNavigate();
+  
+  const { addToast } = useToast(); 
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -22,20 +26,18 @@ const SignupPage = () => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      alert("As senhas não coincidem!");
+      addToast("As senhas não coincidem!", "error");
       return;
     }
 
     if (formData.password.length < 6) {
-      alert("A senha precisa ter pelo menos 6 caracteres.");
+      addToast("A senha precisa ter pelo menos 6 caracteres.", "error");
       return;
     }
 
     setLoading(true);
 
-    
     const success = await signup({
-      
       name: formData.name, 
       email: formData.email,
       password: formData.password
@@ -44,10 +46,9 @@ const SignupPage = () => {
     setLoading(false);
 
     if (success) {
-      alert("Conta criada com sucesso! Faça login para continuar.");
+      addToast("Conta criada com sucesso! Faça login para continuar.", "success");
       navigate('/login');
     }
-    
   };
 
   return (
@@ -61,7 +62,6 @@ const SignupPage = () => {
 
         <form className="auth-form" onSubmit={handleSignup}>
           
-          
           <div className="input-group">
             <label htmlFor="name">Nome Completo</label>
             <input 
@@ -74,7 +74,6 @@ const SignupPage = () => {
             />
           </div>
 
-          
           <div className="input-group">
             <label htmlFor="email">Email</label>
             <input 
@@ -87,7 +86,6 @@ const SignupPage = () => {
             />
           </div>
 
-          
           <div className="input-group">
             <label htmlFor="password">Senha</label>
             <input 
@@ -100,7 +98,6 @@ const SignupPage = () => {
             />
           </div>
 
-          
           <div className="input-group">
             <label htmlFor="confirmPassword">Confirmar Senha</label>
             <input 

@@ -1,31 +1,34 @@
 import React, { useState } from 'react';
 import { projectService } from '../services/api';
+import { useToast } from '../contexts/ToastContext'; // 1. Importando o hook do Toast
 import './UploadModal.css'; 
+
 const UpdateFileModal = ({ isOpen, onClose, onSuccess, projectId }) => {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  
+  const { addToast } = useToast();
 
   if (!isOpen) return null;
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     if (!file) {
-        setError("Por favor, selecione um arquivo.");
+        addToast("Por favor, selecione um arquivo.", "error"); 
         return;
     }
 
     setLoading(true);
-    setError('');
 
     try {
       await projectService.updateFile(projectId, file);
-      alert("Arquivo atualizado com sucesso!");
+      
+      
       onSuccess(); 
       handleClose();
     } catch (err) {
       console.error(err);
-      setError("Erro ao atualizar. Verifique se o arquivo é válido.");
+      addToast("Erro ao atualizar. Verifique se o arquivo é válido.", "error"); 
     } finally {
       setLoading(false);
     }
@@ -33,7 +36,6 @@ const UpdateFileModal = ({ isOpen, onClose, onSuccess, projectId }) => {
 
   const handleClose = () => {
     setFile(null);
-    setError('');
     onClose();
   };
 
@@ -45,8 +47,6 @@ const UpdateFileModal = ({ isOpen, onClose, onSuccess, projectId }) => {
             <h2>Atualizar Planilha</h2>
             <p>Envie o arquivo mais recente deste mês.</p>
           </div>
-
-          {error && <div className="alert-error" style={{padding: '10px', marginBottom: '15px'}}>{error}</div>}
 
           {!file ? (
             <div className="upload-area" onClick={() => document.getElementById('update-file-input').click()}>
